@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asignación de Medicamentos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Contenedor del logo -->
+    <div class="logo-container">
+      <img src="Logo.jpg" alt="Logo de la empresa" class="logo">
+    </div>
+
+    <!-- Título principal -->
+    <h1>Asignación de Medicamentos</h1>
+
+    <!-- Formulario inicial -->
+    <div id="step-1">
+      <label for="jvpm">Buscar Médico (JVPM):</label>
+      <input type="text" id="jvpm" placeholder="Ingrese el JVPM">
+      <button id="buscarMedico">Buscar Médico</button>
+      <!-- Contenedor para mostrar el nombre del médico -->
+      <div id="nombreMedico" style="margin-top: 10px; color: #555;"></div>
+
+      <label for="dia">Día:</label>
+      <select id="dia">
+        <option value="">Seleccione el día</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+
+      <label for="semana">Semana:</label>
+      <select id="semana">
+        <option value="">Seleccione la semana</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+
+      <button id="siguiente">Siguiente</button>
+    </div>
+
+    <!-- Datos del médico y selección de medicamentos -->
+    <div id="step-2" style="display: none;">
+      <div id="datosMedico"></div>
+
+      <label for="listaMedicamentos">Seleccione un medicamento:</label>
+      <select id="listaMedicamentos"></select>
+
+      <div class="button-group">
+        <button id="agregar">Agregar</button>
+        <button id="regresar">Regresar</button>
+      </div>
+
+      <label for="listaSeleccionados">Medicamentos seleccionados:</label>
+      <select id="listaSeleccionados" multiple></select>
+
+      <button id="siguienteCantidad" style="display: none;">Siguiente</button>
+    </div>
+
+    <!-- Asignación de cantidades -->
+    <div id="step-3" style="display: none;">
+      <div id="cantidades"></div>
+      <button id="guardar">Guardar</button>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div id="tablaDatos" style="display: none;">
+      <h2>Datos Guardados</h2>
+      <table id="tablaResultados"></table>
+      <button id="exportar">Generar Documento</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
