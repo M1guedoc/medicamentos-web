@@ -1,125 +1,110 @@
 /* Botón de cerrar sesión */
 .logout-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-  }
-  
-  .logout-button:hover {
-    background-color: #cc0000;
-  }
-  
-  /* Contenedor de contraseñas */
-  .password-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  
-  .password-container input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
-  
-  .password-container input:focus {
-    border-color: #007BFF;
-    outline: none;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
-  }
-  
-  .password-container .toggle-password {
-    align-self: flex-end;
-    background: none;
-    border: none;
-    color: #007BFF;
-    font-size: 1.2em;
-    cursor: pointer;
-    padding: 0;
-  }
-  
-  .password-container .toggle-password:hover {
-    color: #0056b3;
-  }
-  
-  /* Botones generales */
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    border: none;
-    border-radius: 5px;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  /* Contenedor principal del sistema de usuarios */
-  #user-system {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  #user-system h1 {
-    font-size: 24px;
-    color: #007BFF;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  #user-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  #user-form h2 {
-    font-size: 20px;
-    color: #333;
-    text-align: left;
-    margin-bottom: 10px;
-  }
-  
-  #user-form input {
-    font-size: 16px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  #user-form input:focus {
-    border-color: #007BFF;
-    outline: none;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
-  }
-  
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #cc0000;
+}
+
+/* Ajustes específicos para dispositivos móviles */
+@media (max-width: 480px) {
+.logout-button {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+}
+
+/* Contenedor de contraseñas */
+.password-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.password-container input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.password-container input:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+.password-container .toggle-password {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: #007BFF;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.password-container .toggle-password:hover {
+  color: #0056b3;
+}
+
+/* Contenedor principal del sistema de usuarios */
+#user-system {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#user-system h1 {
+  font-size: 24px;
+  color: #007BFF;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#user-form h2 {
+  font-size: 20px;
+  color: #333;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+#user-form input {
+  font-size: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+#user-form input:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
