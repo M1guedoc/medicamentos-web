@@ -20,46 +20,150 @@ Papa.parse("MUESTRA_MEDICA_NEW.csv", {
   complete: function (results) {
     medicamentos = results.data;
     console.log("Medicamentos cargados:", medicamentos);
-
-    if (medicamentos.length === 0) {
-      console.error("El archivo MUESTRA_MEDICA_NEW.csv no tiene datos.");
-    }
   },
   error: function (error) {
     console.error("Error al cargar el archivo CSV:", error);
   },
 });
 
-// Eventos
-document.getElementById("buscarMedico").addEventListener("click", buscarMedico);
-document.getElementById("siguiente").addEventListener("click", pasarASiguientePaso);
-document.getElementById("siguienteCantidad").addEventListener("click", pasarAAsignarCantidades);
-document.getElementById("guardar").addEventListener("click", guardarDatos);
-document.getElementById("exportar").addEventListener("click", exportarDatos);
-document.getElementById("agregar").addEventListener("click", agregarMedicamento);
-document.getElementById("regresar").addEventListener("click", regresarMedicamento);
+// Cargar datos guardados desde localStorage al iniciar la aplicación
+document.addEventListener("DOMContentLoaded", function () {
+  cargarDatosDelUsuario();
+});
 
-// Función para buscar médico
-function buscarMedico() {
-  const jvpm = document.getElementById("jvpm").value.trim();
-  const medico = medicos.find((m) => m.Colegiado === jvpm);
+// Cargar datos específicos del usuario
+function cargarDatosDelUsuario() {
+  const activeUser = localStorage.getItem("activeUser");
 
-  const nombreMedicoElement = document.getElementById("nombreMedico");
-
-  if (!nombreMedicoElement) {
-    console.error("Elemento con ID 'nombreMedico' no encontrado en el DOM.");
+  if (!activeUser) {
+    console.warn("No hay usuario activo.");
     return;
   }
+
+  // Limpiar datos antiguos
+  datosGuardados = [];
+
+  // Cargar los datos específicos de cada usuario desde localStorage
+  const storedData = localStorage.getItem(`tablaDatos_${activeUser}`);
+  if (storedData) {
+    datosGuardados = JSON.parse(storedData);
+    actualizarTabla();
+  } else {
+    datosGuardados = [];
+    actualizarTabla();
+  }
+}
+
+// Guardar datos específicos del usuario
+function guardarDatosDelUsuario() {
+  const activeUser = localStorage.getItem("activeUser");
+  if (!activeUser) {
+    console.error("No hay usuario activo. No se pueden guardar los datos.");
+    return;
+  }
+
+  // Guardar los datos del usuario con el nombre de usuario único
+  localStorage.setItem(`tablaDatos_${activeUser}`, JSON.stringify(datosGuardados));
+}
+
+// Función para registrar usuario
+function registerUser() {
+  const username = document.getElementById("reg-username").value.trim();
+  const password = document.getElementById("reg-password").value.trim();
+
+  if (!username || !password) {
+    alert("Por favor, ingrese un usuario y una contraseña.");
+    return;
+  }
+
+  if (localStorage.getItem(username)) {
+    alert("El usuario ya existe.");
+    return;
+  }
+
+  localStorage.setItem(username, password);
+  alert("Usuario registrado exitosamente.");
+}
+
+// Función para iniciar sesión
+function loginUser() {
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+
+  if (!username || !password) {
+    alert("Por favor, ingrese un usuario y una contraseña.");
+    return;
+  }
+
+  const storedPassword = localStorage.getItem(username);
+
+  if (storedPassword && storedPassword === password) {
+    alert("Inicio de sesión exitoso.");
+    localStorage.setItem("activeUser", username); // Guardar usuario activo en localStorage
+
+    // Limpiar la tabla de datos guardados previos de otros usuarios
+    datosGuardados = [];
+    cargarDatosDelUsuario();
+
+    // Cambiar vista a la aplicación principal
+    document.getElementById("app").style.display = "block";
+    document.getElementById("user-system").style.display = "none";
+  } else {
+    alert("Usuario o contraseña incorrectos.");
+  }
+}
+
+// Función para cerrar sesión
+function logoutUser() {
+  localStorage.removeItem("activeUser");
+  alert("Has cerrado sesión.");
+  location.reload(); // Recargar la página
+}
+
+// Función para "Olvidé mi contraseña"
+function forgotPassword() {
+  const username = document.getElementById("login-username").value.trim();
+
+  if (!username) {
+    alert("Por favor, ingrese su usuario para recuperar la contraseña.");
+    return;
+  }
+
+  const storedPassword = localStorage.getItem(username);
+
+  if (storedPassword) {
+    alert(`Su contraseña es: ${storedPassword}`);
+  } else {
+    alert("Usuario no encontrado.");
+  }
+}
+
+// Función para mostrar/ocultar contraseña
+function togglePassword(inputId, toggleButton) {
+  const passwordField = document.getElementById(inputId);
+  const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+  passwordField.setAttribute("type", type);
+
+  // Cambiar texto del botón
+  toggleButton.textContent = type === "password" ? "👁️ Mostrar/Ocultar" : "👁️ Ocultar";
+}
+
+// Función para buscar médico
+document.getElementById("buscarMedico").addEventListener("click", function () {
+  const jvpm = document.getElementById("jvpm").value.trim();
+  const medico = medicos.find((m) => m.Colegiado === jvpm); // Buscar por el JVPM en la columna "Colegiado"
+
+  const nombreMedicoElement = document.getElementById("nombreMedico");
 
   if (medico) {
     nombreMedicoElement.innerText = `Nombre: ${medico.NombreLargo}`;
   } else {
     nombreMedicoElement.innerText = "Médico no encontrado";
   }
-}
+});
 
 // Pasar al siguiente paso
-function pasarASiguientePaso() {
+document.getElementById("siguiente").addEventListener("click", function () {
   const jvpm = document.getElementById("jvpm").value.trim();
   const dia = document.getElementById("dia").value;
   const semana = document.getElementById("semana").value;
@@ -81,7 +185,7 @@ function pasarASiguientePaso() {
   document.getElementById("step-2").style.display = "block";
 
   mostrarMedicamentos();
-}
+});
 
 // Mostrar lista de medicamentos
 function mostrarMedicamentos() {
@@ -95,12 +199,12 @@ function mostrarMedicamentos() {
     medicamentosContainer.appendChild(option);
   });
 
-  seleccionados = []; // Reiniciar los medicamentos seleccionados
+  seleccionados = [];
   actualizarSeleccionados();
 }
 
 // Agregar un medicamento
-function agregarMedicamento() {
+document.getElementById("agregar").addEventListener("click", function () {
   const lista = document.getElementById("listaMedicamentos");
   const seleccionado = lista.options[lista.selectedIndex];
 
@@ -115,25 +219,28 @@ function agregarMedicamento() {
   } else if (seleccionados.length >= 8) {
     alert("Solo se permiten 8 medicamentos.");
   }
-}
+});
 
-// Regresar un medicamento a la lista
-function regresarMedicamento() {
-  const lista = document.getElementById("listaSeleccionados");
-  const seleccionado = lista.options[lista.selectedIndex];
+// Regresar un medicamento a la lista original
+document.getElementById("regresar").addEventListener("click", function () {
+  const listaSeleccionados = document.getElementById("listaSeleccionados");
+  const seleccionado = listaSeleccionados.options[listaSeleccionados.selectedIndex];
 
   if (seleccionado) {
+    seleccionados = seleccionados.filter((med) => med.ID !== seleccionado.value);
+
     const medicamentosContainer = document.getElementById("listaMedicamentos");
     const option = document.createElement("option");
     option.value = seleccionado.value;
     option.textContent = seleccionado.textContent;
     medicamentosContainer.appendChild(option);
 
-    seleccionados = seleccionados.filter((med) => med.ID !== seleccionado.value);
-    lista.remove(lista.selectedIndex);
+    listaSeleccionados.remove(listaSeleccionados.selectedIndex);
     actualizarSeleccionados();
+  } else {
+    alert("Seleccione un medicamento para regresar.");
   }
-}
+});
 
 // Actualizar lista de seleccionados
 function actualizarSeleccionados() {
@@ -147,12 +254,20 @@ function actualizarSeleccionados() {
     seleccionadosContainer.appendChild(option);
   });
 
-  document.getElementById("siguienteCantidad").style.display =
-    seleccionados.length === 8 ? "block" : "none";
+  if (seleccionados.length === 8) {
+    document.getElementById("siguienteCantidad").style.display = "block";
+  } else {
+    document.getElementById("siguienteCantidad").style.display = "none";
+  }
 }
 
-// Pasar a la asignación de cantidades
-function pasarAAsignarCantidades() {
+// Función para pasar a la asignación de cantidades
+document.getElementById("siguienteCantidad").addEventListener("click", function () {
+  if (seleccionados.length !== 8) {
+    alert("Debe seleccionar exactamente 8 medicamentos antes de continuar.");
+    return;
+  }
+
   document.getElementById("step-2").style.display = "none";
   document.getElementById("step-3").style.display = "block";
 
@@ -178,7 +293,6 @@ function pasarAAsignarCantidades() {
 
   const inputs = document.querySelectorAll(".cantidad-input");
   inputs.forEach((input, index) => {
-    // Desplazamiento entre campos con flechas
     input.addEventListener("keydown", (event) => {
       if (event.key === "ArrowDown" && index < inputs.length - 1) {
         event.preventDefault();
@@ -189,7 +303,6 @@ function pasarAAsignarCantidades() {
       }
     });
 
-    // Validación al salir del campo
     input.addEventListener("blur", () => {
       if (input.value > 4) {
         input.value = 4;
@@ -198,14 +311,19 @@ function pasarAAsignarCantidades() {
       }
     });
   });
-}
+});
 
-// Guardar los datos ingresados
-function guardarDatos() {
+// Guardar datos ingresados
+document.getElementById("guardar").addEventListener("click", function () {
   const jvpm = document.getElementById("jvpm").value.trim();
   const dia = document.getElementById("dia").value;
   const semana = document.getElementById("semana").value;
   const medico = medicos.find((m) => m.Colegiado === jvpm);
+
+  if (!medico) {
+    alert("El JVPM ingresado no es válido. No se guardarán los datos.");
+    return;
+  }
 
   const cantidades = Array.from(document.querySelectorAll(".cantidad-input")).map((input) => ({
     id: input.getAttribute("data-id"),
@@ -218,37 +336,37 @@ function guardarDatos() {
       jvpm: jvpm,
       codigoProducto: med.id,
       nombreProducto: seleccionados.find((s) => s.ID === med.id).DESCRIPCION,
-      cantidadMM: med.cantidad,
-      semana: semana,
+      cantidad: med.cantidad,
       dia: dia,
+      semana: semana,
     });
   });
 
   actualizarTabla();
+  guardarDatosDelUsuario();
 
-  // Reiniciar todo para el próximo médico
+  document.getElementById("step-3").style.display = "none";
+  document.getElementById("step-1").style.display = "block";
+
   document.getElementById("jvpm").value = "";
   document.getElementById("dia").value = "";
   document.getElementById("semana").value = "";
   seleccionados = [];
   mostrarMedicamentos();
+});
 
-  document.getElementById("step-3").style.display = "none";
-  document.getElementById("step-1").style.display = "block";
-}
-
-// Actualizar la tabla de resultados
+// Actualizar la tabla
 function actualizarTabla() {
   const tablaResultados = document.getElementById("tablaResultados");
   tablaResultados.innerHTML = `
     <tr>
-      <th>Nombre</th>
+      <th>Nombre del Médico</th>
       <th>JVPM</th>
-      <th>CodigoMM</th>
-      <th>Medicamentos</th>
-      <th>CantidadMM</th>
-      <th>Semana</th>
+      <th>Código del Medicamento</th>
+      <th>Nombre del Medicamento</th>
+      <th>Cantidad</th>
       <th>Día</th>
+      <th>Semana</th>
     </tr>
   `;
 
@@ -259,9 +377,9 @@ function actualizarTabla() {
       <td>${dato.jvpm}</td>
       <td>${dato.codigoProducto}</td>
       <td>${dato.nombreProducto}</td>
-      <td>${dato.cantidadMM}</td>
-      <td>${dato.semana}</td>
+      <td>${dato.cantidad}</td>
       <td>${dato.dia}</td>
+      <td>${dato.semana}</td>
     `;
     tablaResultados.appendChild(tr);
   });
@@ -269,10 +387,42 @@ function actualizarTabla() {
   document.getElementById("tablaDatos").style.display = "block";
 }
 
-// Exportar los datos a Excel
-function exportarDatos() {
-  const ws = XLSX.utils.json_to_sheet(datosGuardados);
+// Exportar los datos a un archivo Excel
+document.getElementById("exportar").addEventListener("click", function () {
+  if (datosGuardados.length === 0) {
+    alert("No hay datos para exportar.");
+    return;
+  }
+
+  const nombreArchivo = "ParrillaPromocional.xlsx";
+
+  const wsData = datosGuardados.map((dato) => ({
+    "Nombre del Médico": dato.nombreMedico,
+    JVPM: dato.jvpm,
+    "Código del Medicamento": dato.codigoProducto,
+    "Nombre del Medicamento": dato.nombreProducto,
+    Cantidad: dato.cantidad,
+    Día: dato.dia,
+    Semana: dato.semana,
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(wsData);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Datos");
-  XLSX.writeFile(wb, "AsignacionMedica.xlsx");
-}
+  XLSX.utils.book_append_sheet(wb, ws, "Asignación Médica");
+  XLSX.writeFile(wb, nombreArchivo);
+});
+
+// Borrar todos los datos guardados
+document.getElementById("borrarDatos").addEventListener("click", function () {
+  if (confirm("¿Estás seguro de que deseas borrar todos los datos? Esta acción no se puede deshacer.")) {
+    const activeUser = localStorage.getItem("activeUser");
+    if (activeUser) {
+      localStorage.removeItem(`tablaDatos_${activeUser}`);
+      datosGuardados = [];
+      actualizarTabla();
+      alert("Todos los datos han sido borrados.");
+    } else {
+      alert("No hay un usuario activo. No se pueden borrar datos.");
+    }
+  }
+});
